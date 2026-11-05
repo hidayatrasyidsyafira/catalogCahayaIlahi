@@ -293,6 +293,10 @@ function renderProducts(items) {
     $empty.hidden = false;
     return;
   }
+   console.log("Data produk:", items); 
+
+ 
+  
   $empty.hidden = true;
   $grid.innerHTML = items.map(p => {
     // 1. Bersihkan URL dari spasi, enter, dan tab yang tidak terlihat
