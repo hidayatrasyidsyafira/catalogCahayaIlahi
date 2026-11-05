@@ -295,8 +295,11 @@ function renderProducts(items) {
   }
   $empty.hidden = true;
   $grid.innerHTML = items.map(p => {
-    const img = p.gambar_url
-      ? `<img src="${escapeHTML(p.gambar_url)}" alt="${escapeHTML(p.nama)}" loading="lazy"
+    // Tambahkan .trim() di sini untuk membuang spasi gaib
+    const urlBersih = p.gambar_url ? p.gambar_url.trim() : ''; 
+    
+    const img = urlBersih
+      ? `<img src="${escapeHTML(urlBersih)}" alt="${escapeHTML(p.nama)}" loading="lazy"
               onerror="this.style.display='none';this.nextElementSibling.hidden=false">
          <div class="ph" hidden>
            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
