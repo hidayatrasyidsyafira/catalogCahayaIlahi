@@ -299,8 +299,11 @@ function renderProducts(items) {
     const urlBersih = p.gambar_url ? p.gambar_url.trim() : ''; 
     
     const img = urlBersih
-      ? `<img src="${escapeHTML(urlBersih)}" alt="${escapeHTML(p.nama)}" loading="lazy"
-              onerror="this.style.display='none';this.nextElementSibling.hidden=false">
+      ? `<img src="${escapeHTML(urlBersih)}" 
+         alt="${escapeHTML(p.nama)}" 
+         loading="lazy"
+         referrerpolicy="no-referrer" 
+         onerror="this.style.display='none';this.nextElementSibling.hidden=false">
          <div class="ph" hidden>
            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
              <rect x="3" y="3" width="18" height="18" rx="2"/>
