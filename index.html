@@ -302,7 +302,7 @@ function renderProducts(items) {
   $grid.innerHTML = items.map(p => {
     // 1. Bersihkan URL dari spasi, enter, dan tab yang tidak terlihat
     const rawUrl = p.gambar_url ? String(p.gambar_url) : '';
-    const cleanUrl = rawUrl.replace(/[\n\r\t ]/g, ''); 
+    const cleanUrl = rawUrl ? encodeURI(rawUrl.trim()) : ''; 
     
     const img = cleanUrl
       ? `<img src="${cleanUrl}" alt="${escapeHTML(p.nama)}" loading="lazy"
