@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F6A21A">
+<title>Katalog · Percetakan Cahaya</title>
+<style>
+:root{
+  --primary:#F6A21A; --primary-hover:#D98600; --primary-soft:#FFF3DD;
+  --ink:#1E293B; --ink-muted:#64748B; --line:#E2E8F0;
+  --bg:#FFF9F0; --surface:#FFFFFF;
+  --success:#16A34A; --warning:#F59E0B; --danger:#DC2626;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.06);
+  --shadow-md:0 4px 12px rgba(15,23,42,.08);
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg); color:var(--ink); font-size:14px; line-height:1.55;
+  padding-bottom:calc(72px + env(safe-area-inset-bottom));
+  min-height:100dvh;
+}
+img{display:block;max-width:100%}
+button{font-family:inherit}
+
+/* --- Topbar --- */
+.topbar{
+  position:sticky; top:0; z-index:20;
+  background:var(--bg);
+  padding:10px 16px 10px;
+  border-bottom:1px solid var(--line);
+}
+.topbar-row{display:flex; align-items:center; gap:8px; margin-bottom:10px}
+.topbar-title{font-size:18px; font-weight:700; margin:0; flex:1; color:var(--ink)}
+.icon-btn{
+  width:36px; height:36px; border-radius:var(--radius-sm);
+  background:transparent; border:none; display:grid; place-items:center;
+  color:var(--ink); cursor:pointer;
+}
+.icon-btn:hover{background:#F1F5F9}
+.search{
+  position:relative; display:flex; align-items:center;
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--radius-sm); height:42px; padding:0 12px;
+  transition:border-color .15s, box-shadow .15s;
+}
+.search:focus-within{border-color:var(--primary); box-shadow:0 0 0 3px rgba(246,162,26,.2)}
+.search svg{width:18px;height:18px;color:var(--ink-muted);flex-shrink:0;margin-right:8px}
+.search input{
+  flex:1; border:none; outline:none; background:transparent;
+  font-size:14px; color:var(--ink); height:100%;
+}
+.search input::placeholder{color:var(--ink-muted)}
+
+/* --- Banner --- */
+.banner{
+  margin:12px 16px 0; padding:12px 14px; border-radius:var(--radius-md);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  font-size:13px;
+}
+.banner.error{background:#FEF3C7; color:#92400E; border:1px solid #FCD34D}
+.banner button{
+  background:var(--primary); color:#fff; border:none;
+  border-radius:var(--radius-sm); padding:6px 12px; font-weight:600; cursor:pointer; font-size:12.5px;
+}
+.banner button:hover{background:var(--primary-hover)}
+
+/* --- Chips --- */
+.chips{
+  display:flex; gap:8px; overflow-x:auto;
+  padding:14px 16px 6px; scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto; padding:7px 14px; border-radius:999px;
+  background:var(--surface); border:1px solid var(--line);
+  font-size:13px; font-weight:600; color:var(--ink-muted);
+  cursor:pointer; transition:all .15s ease;
+}
+.chip:hover{border-color:var(--primary)}
+.chip.active{background:var(--primary-soft); border-color:var(--primary); color:var(--primary-hover)}
+
+/* --- Grid --- */
+.grid{
+  display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
+  padding:8px 16px 16px;
+}
+@media (min-width:640px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1024px){.grid{grid-template-columns:repeat(4,1fr); max-width:1200px; margin:0 auto}}
+.card{
+  background:var(--surface); border-radius:var(--radius-lg); overflow:hidden;
+  box-shadow:var(--shadow-sm); text-decoration:none; color:inherit;
+  display:flex; flex-direction:column; transition:transform .15s, box-shadow .15s;
+}
+.card:active{transform:scale(.98)}
+@media (hover:hover){
+  .card:hover{box-shadow:var(--shadow-md); transform:translateY(-2px)}
+}
+.card-img{
+  aspect-ratio:4/3; background:#F8FAFC; overflow:hidden; position:relative;
+}
+.card-img img{width:100%; height:100%; object-fit:cover}
+.card-img .ph{
+  position:absolute; inset:0; display:grid; place-items:center;
+  color:var(--ink-muted); background:#F8FAFC;
+}
+.card-body{padding:10px 12px 12px; flex:1; display:flex; flex-direction:column}
+.card-title{
+  font-size:13px; font-weight:600; margin:0 0 4px; line-height:1.35;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  overflow:hidden; min-height:35px;
+}
+.card-price{font-size:15px; font-weight:700; color:var(--primary-hover); margin:0}
+.card-meta{font-size:11px; color:var(--ink-muted); margin-top:2px}
+
+/* --- Skeleton --- */
+.sk-card{background:var(--surface); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-sm)}
+.sk{background:linear-gradient(90deg,#F1F5F9 0%,#E2E8F0 50%,#F1F5F9 100%); background-size:200% 100%; animation:shimmer 1.4s infinite}
+.sk-img{aspect-ratio:4/3}
+.sk-line{height:12px; margin:10px 12px}
+.sk-line.short{width:55%}
+.sk-line.tiny{height:10px; width:40%; margin-top:6px; margin-bottom:12px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* --- Empty --- */
+.empty{
+  text-align:center; padding:48px 24px; color:var(--ink-muted);
+}
+.empty svg{width:56px; height:56px; opacity:.4; margin-bottom:12px}
+.empty p{margin:0; font-size:14px}
+
+/* --- Bottom nav --- */
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:0; z-index:30;
+  display:grid; grid-template-columns:repeat(5,1fr);
+  background:var(--surface); border-top:1px solid var(--line);
+  box-shadow:0 -2px 12px rgba(15,23,42,.06);
+  padding:6px 0 calc(6px + env(safe-area-inset-bottom));
+}
+.nav-item{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  font-size:10.5px; font-weight:600; color:var(--ink-muted);
+  text-decoration:none; padding:4px 0;
+}
+.nav-item.active{color:var(--primary)}
+.nav-item svg{width:22px; height:22px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-row">
+    <a class="icon-btn" href="index.html" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <h1 class="topbar-title">Katalog</h1>
+    <button class="icon-btn" aria-label="Filter">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+    </button>
+  </div>
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input id="search" type="search" placeholder="Cari produk cetak…" autocomplete="off">
+  </div>
+</header>
+
+<div id="banner" class="banner" hidden></div>
+
+<div class="chips" id="chips"></div>
+
+<main class="grid" id="grid"></main>
+
+<div class="empty" id="empty" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+  <p>Tidak ada produk yang cocok.</p>
+</div>
+
+<nav class="bottom-nav">
+  <a class="nav-item" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg>
+    Beranda
+  </a>
+  <a class="nav-item active" href="katalog.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    Katalog
+  </a>
+  <a class="nav-item" href="upload.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg>
+    Upload
+  </a>
+  <a class="nav-item" href="pesanan.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+    Pesanan
+  </a>
+  <a class="nav-item" href="akun.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+    Akun
+  </a>
+</nav>
+
+<script>
+/* ============================================================
+   KONFIGURASI — ganti API_URL dengan URL Web App Apps Script
+   ============================================================ */
+const CONFIG = {
+  API_URL: 'https://script.google.com/macros/s/GANTI_DEPLOYMENT_ID/exec',
+  CACHE_KEY: 'cahaya_products_v1',
+  CACHE_TTL: 5 * 60 * 1000, // 5 menit
+};
+
+const state = {
+  allProducts: [],
+  category: 'all',
+  search: '',
+};
+
+const $grid   = document.getElementById('grid');
+const $chips  = document.getElementById('chips');
+const $banner = document.getElementById('banner');
+const $search = document.getElementById('search');
+const $empty  = document.getElementById('empty');
+
+/* ---------- Cache ---------- */
+function getCache() {
+  try {
+    const raw = localStorage.getItem(CONFIG.CACHE_KEY);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CONFIG.CACHE_TTL) return null;
+    return data;
+  } catch { return null; }
+}
+function setCache(data) {
+  try {
+    localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+  } catch {}
+}
+
+/* ---------- Fetch ---------- */
+async function fetchProducts() {
+  const cached = getCache();
+  if (cached) return cached;
+
+  const res = await fetch(CONFIG.API_URL, { method: 'GET' });
+  if (!res.ok) throw new Error('Gagal memuat data (' + res.status + ')');
+
+  const json = await res.json();
+  if (!json.ok || !Array.isArray(json.data)) throw new Error('Format data tidak valid');
+
+  setCache(json.data);
+  return json.data;
+}
+
+/* ---------- Utils ---------- */
+function escapeHTML(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function formatRupiah(n) {
+  return 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+}
+
+/* ---------- Render ---------- */
+function renderSkeleton(count = 6) {
+  $chips.innerHTML = '';
+  $empty.hidden = true;
+  $grid.innerHTML = Array.from({ length: count }).map(() => `
+    <div class="sk-card">
+      <div class="sk sk-img"></div>
+      <div class="sk sk-line"></div>
+      <div class="sk sk-line short"></div>
+      <div class="sk sk-line tiny"></div>
+    </div>
+  `).join('');
+}
+
+function renderChips() {
+  const cats = ['all', ...new Set(state.allProducts.map(p => p.kategori).filter(Boolean))];
+  $chips.innerHTML = cats.map(c => `
+    <button class="chip ${c === state.category ? 'active' : ''}" data-cat="${escapeHTML(c)}">
+      ${c === 'all' ? 'Semua' : escapeHTML(c)}
+    </button>
+  `).join('');
+}
+
+function renderProducts(items) {
+  if (!items.length) {
+    $grid.innerHTML = '';
+    $empty.hidden = false;
+    return;
+  }
+  $empty.hidden = true;
+  $grid.innerHTML = items.map(p => {
+    const img = p.gambar_url
+      ? `<img src="${escapeHTML(p.gambar_url)}" alt="${escapeHTML(p.nama)}" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.hidden=false">
+         <div class="ph" hidden>
+           <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+             <rect x="3" y="3" width="18" height="18" rx="2"/>
+             <circle cx="8.5" cy="8.5" r="1.5"/>
+             <path d="M21 15l-5-5L5 21"/>
+           </svg>
+         </div>`
+      : `<div class="ph">
+           <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+             <rect x="3" y="3" width="18" height="18" rx="2"/>
+             <circle cx="8.5" cy="8.5" r="1.5"/>
+             <path d="M21 15l-5-5L5 21"/>
+           </svg>
+         </div>`;
+    return `
+      <a class="card" href="detail.html?id=${encodeURIComponent(p.id)}">
+        <div class="card-img">${img}</div>
+        <div class="card-body">
+          <h3 class="card-title">${escapeHTML(p.nama)}</h3>
+          <p class="card-price">${formatRupiah(p.harga_dasar)}</p>
+          <div class="card-meta">${escapeHTML(p.kategori || '')}</div>
+        </div>
+      </a>`;
+  }).join('');
+}
+
+function applyFilter() {
+  let items = state.allProducts;
+  if (state.category !== 'all') {
+    items = items.filter(p => p.kategori === state.category);
+  }
+  const q = state.search.trim().toLowerCase();
+  if (q) {
+    items = items.filter(p => (p.nama || '').toLowerCase().includes(q));
+  }
+  renderProducts(items);
+}
+
+/* ---------- Error ---------- */
+function showError(msg) {
+  $banner.className = 'banner error';
+  $banner.hidden = false;
+  $banner.innerHTML = `<div>⚠ ${escapeHTML(msg)}</div><button id="retry">Coba lagi</button>`;
+  document.getElementById('retry').onclick = init;
+}
+function hideBanner() { $banner.hidden = true; }
+
+/* ---------- Init ---------- */
+async function init() {
+  hideBanner();
+  renderSkeleton();
+  try {
+    state.allProducts = await fetchProducts();
+    renderChips();
+    applyFilter();
+  } catch (e) {
+    showError(e.message || 'Gagal memuat katalog');
+    $grid.innerHTML = '';
+    $empty.hidden = true;
+  }
+}
+
+/* ---------- Events ---------- */
+$chips.addEventListener('click', (e) => {
+  const btn = e.target.closest('.chip');
+  if (!btn) return;
+  state.category = btn.dataset.cat;
+  document.querySelectorAll('.chip').forEach(c =>
+    c.classList.toggle('active', c === btn));
+  applyFilter();
+});
+
+let searchTimer;
+$search.addEventListener('input', (e) => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    state.search = e.target.value;
+    applyFilter();
+  }, 250);
+});
+
+init();
+</script>
+</body>
+</html>
