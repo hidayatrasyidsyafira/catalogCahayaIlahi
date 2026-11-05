@@ -295,15 +295,13 @@ function renderProducts(items) {
   }
   $empty.hidden = true;
   $grid.innerHTML = items.map(p => {
-    // Tambahkan .trim() di sini untuk membuang spasi gaib
-    const urlBersih = p.gambar_url ? p.gambar_url.trim() : ''; 
+    // 1. Bersihkan URL dari spasi, enter, dan tab yang tidak terlihat
+    const rawUrl = p.gambar_url ? String(p.gambar_url) : '';
+    const cleanUrl = rawUrl.replace(/[\n\r\t ]/g, ''); 
     
-    const img = urlBersih
-      ? `<img src="${escapeHTML(urlBersih)}" 
-         alt="${escapeHTML(p.nama)}" 
-         loading="lazy"
-         referrerpolicy="no-referrer" 
-         onerror="this.style.display='none';this.nextElementSibling.hidden=false">
+    const img = cleanUrl
+      ? `<img src="${cleanUrl}" alt="${escapeHTML(p.nama)}" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.hidden=false">
          <div class="ph" hidden>
            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
              <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -318,6 +316,7 @@ function renderProducts(items) {
              <path d="M21 15l-5-5L5 21"/>
            </svg>
          </div>`;
+         
     return `
       <a class="card" href="detail.html?id=${encodeURIComponent(p.id)}">
         <div class="card-img">${img}</div>
