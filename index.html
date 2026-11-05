@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta name="referrer" content="no-referrer">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F6A21A">
@@ -170,9 +169,7 @@ button{font-family:inherit}
 </header>
 
 <div id="banner" class="banner" hidden></div>
-
 <div class="chips" id="chips"></div>
-
 <main class="grid" id="grid"></main>
 
 <div class="empty" id="empty" hidden>
@@ -204,13 +201,10 @@ button{font-family:inherit}
 </nav>
 
 <script>
-/* ============================================================
-   KONFIGURASI — ganti API_URL dengan URL Web App Apps Script
-   ============================================================ */
 const CONFIG = {
   API_URL: 'https://script.google.com/macros/s/AKfycbyz-LdPfIGx90M4x7R8CIZybmH7BzJrKFnNYOoafXCAHNgwVzr8tANuRjyOKWyLcx5I/exec',
   CACHE_KEY: 'cahaya_products_v1',
-  CACHE_TTL: 5 * 60 * 1000, // 5 menit
+  CACHE_TTL: 5 * 60 * 1000,
 };
 
 const state = {
@@ -294,37 +288,42 @@ function renderProducts(items) {
     $empty.hidden = false;
     return;
   }
-   console.log("Data produk:", items); 
-
- 
-  
   $empty.hidden = true;
+  
   $grid.innerHTML = items.map(p => {
-    // 1. Bersihkan URL dari spasi, enter, dan tab yang tidak terlihat
-    const rawUrl = p.gambar_url ? String(p.gambar_url) : '';
-    const cleanUrl = rawUrl ? encodeURI(rawUrl.trim()) : ''; 
-    
-    const img = cleanUrl
-      ? `<img src="${cleanUrl}" alt="${escapeHTML(p.nama)}" loading="lazy"
-              onerror="this.style.display='none';this.nextElementSibling.hidden=false">
-         <div class="ph" hidden>
-           <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
-             <rect x="3" y="3" width="18" height="18" rx="2"/>
-             <circle cx="8.5" cy="8.5" r="1.5"/>
-             <path d="M21 15l-5-5L5 21"/>
-           </svg>
-         </div>`
-      : `<div class="ph">
-           <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
-             <rect x="3" y="3" width="18" height="18" rx="2"/>
-             <circle cx="8.5" cy="8.5" r="1.5"/>
-             <path d="M21 15l-5-5L5 21"/>
-           </svg>
-         </div>`;
+    // Ambil URL dan ubah spasi menjadi %20 agar valid (metode dari kode Cek Nilai)
+    let imgUrl = p.gambar_url ? String(p.gambar_url).trim() : '';
+    if (imgUrl) {
+        imgUrl = imgUrl.replace(/ /g, "%20");
+    }
+
+    // SVG Placeholder jika gambar error/kosong
+    const phSVG = `
+      <div class="ph">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+      </div>
+    `;
+
+    // HTML untuk gambar dengan metode onerror yang aman
+    const imgHTML = imgUrl ? `
+      <img src="${imgUrl}" alt="${escapeHTML(p.nama)}" loading="lazy"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+      <div class="ph" style="display:none">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+      </div>
+    ` : phSVG;
          
     return `
       <a class="card" href="detail.html?id=${encodeURIComponent(p.id)}">
-        <div class="card-img">${img}</div>
+        <div class="card-img">${imgHTML}</div>
         <div class="card-body">
           <h3 class="card-title">${escapeHTML(p.nama)}</h3>
           <p class="card-price">${formatRupiah(p.harga_dasar)}</p>
